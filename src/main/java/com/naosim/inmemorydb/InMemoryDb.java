@@ -1,5 +1,7 @@
 package com.naosim.inmemorydb;
 
+import com.naosim.inmemorydb.exception.DuplicatePrimaryKeyException;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -14,7 +16,7 @@ public class InMemoryDb {
         private final Sequence idSequence = new Sequence();
 
         public String createId() {
-            return idSequence.next(v -> tableName + v.toString());
+            return idSequence.next(v -> tableName + "_" + v.toString());
         }
 
         public <T> T createId(Function<Long, T> factory) {
@@ -32,7 +34,7 @@ public class InMemoryDb {
 
         public String insert(String id, R record) {
             if(map.containsKey(id)) {
-                throw new RuntimeException("IDが重複しています");
+                throw new DuplicatePrimaryKeyException("duplicate:" + id);
             }
             map.put(id, record);
             return id;
