@@ -4,6 +4,7 @@ version '1.0-SNAPSHOT'
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: "jacoco"
 
 sourceCompatibility = 1.8
 
@@ -23,6 +24,51 @@ uploadArchives {
             pom.version = '0.1.0'
             pom.groupId = 'com.naosim'
             pom.artifactId = 'inmemorydb'
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "0.7.9"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+task jacoco(type: JacocoReport, dependsOn: 'test') {
+    sourceSets sourceSets.main
+    executionData = files(tasks.jacocoTestReport.executionData)
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = true
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.5
+            }
+        }
+
+        rule {
+            enabled = false
+            element = 'CLASS'
+            includes = ['org.gradle.*']
+
+            limit {
+                counter = 'LINE'
+                value = 'TOTALCOUNT'
+                maximum = 0.3
+            }
         }
     }
 }
