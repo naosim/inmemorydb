@@ -32,6 +32,13 @@ public class InMemoryDb {
             map.clear();
         }
 
+        /**
+         *
+         * throw DuplicatePrimaryKeyException if the specified id already exists.
+         * @param id
+         * @param record
+         * @return id
+         */
         public String insert(String id, R record) {
             if(map.containsKey(id)) {
                 throw new DuplicatePrimaryKeyException("duplicate:" + id);
@@ -40,6 +47,11 @@ public class InMemoryDb {
             return id;
         }
 
+        /**
+         * @param id
+         * @param record
+         * @return id
+         */
         public String deleteInsert(String id, R record) {
             if(map.containsKey(id)) {
                 map.remove(id);
